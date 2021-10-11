@@ -1,18 +1,23 @@
-from instabot import Bot
+from time import sleep
 from requests import get
+from instabot import Bot
 import telebot
 from telebot import types
-from time import sleep
 
 botP = Bot()
-botP.login(username = "parser9900",  password = "7712parser19", use_cookies = False)
+sleep(5)
+#-------------------------SETTINGS-------------------------
+botP.login(username = "USERNAME",  password = "PASSWORD", use_cookie = False)
+bot = telebot.TeleBot('TELEGRAM BOT TOKEN');
+#----------------------------------------------------------
 
+#-------------------------FUNCTIONS------------------------
 def is_admin(user_id):
-    with open(r'C:\Users\alexx\RafflesBot\admins.txt') as f:
+    with open('admins.txt') as f:
         strings = f.read()
         return True if user_id in strings else False
 def is_repeat(post_ident):
-    with open(r'C:\Users\alexx\RafflesBot\ids.txt') as f:
+    with open('ids.txt') as f:
         strings = f.read()
         return True if post_ident in strings else False
 
@@ -29,8 +34,7 @@ def parsing(profile):
     return img, text, post_id
 
 def subscribe(mes):
-    #bot.send_message(mes.from_user.id, '✔️ Checking...')
-    file = open(r'C:\Users\alexx\RafflesBot\insts.txt', "r")
+    file = open('insts.txt', "r")
     insts = []
     is_empty = False
     while True:
@@ -46,22 +50,22 @@ def subscribe(mes):
         for j in range (len(insts)):
             image, text, post_id = parsing(insts[j])
             if not is_repeat(post_id + ';'):
-                strings = open(r'C:\Users\alexx\RafflesBot\ids.txt').read()
+                strings = open('ids.txt').read()
                 if not(post_id in strings):
-                    with open(r'C:\Users\alexx\RafflesBot\ids.txt', 'a') as file:
+                    with open('ids.txt', 'a') as file:
                         file.write('\n' + post_id + ';')
                     print("New post: " + post_id)
                     if text.lower().find('раффл') !=-1 or text.lower().find('рафл') !=-1 or text.lower().find('raffle') !=-1 or text.lower().find('регистрация') !=-1:
                         success_msg = '✔️' + ' instagram.com/' + insts[j] + '\n' + text
                         bot.send_photo(mes.from_user.id, get(image).content, caption = success_msg)
-                        
-bot = telebot.TeleBot('1904336275:AAFevPexY8P_TeKkWhl5yBpQk0YErZNrn98');
-is_sub = False
+#----------------------------------------------------------
 
+#--------------------------SCRIPT--------------------------
+is_sub = False
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
     if call.data == "yes":
-        f = open(r'C:\Users\alexx\RafflesBot\insts.txt', 'w')
+        f = open('insts.txt', 'w')
         f.close()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="✅ The list of accounts has been cleared!", reply_markup=None)
     elif call.data == "no":
@@ -74,7 +78,7 @@ def get_text_messages(message):
     elif message.text == "/help":
         bot.send_message(message.from_user.id, "/check - check all last posts from sources at once\n/add - add new sources (for admin only)\n/clear - delete all sources (for admin only)\n/list - view all sources\n/sub - subscribe to the newsletter of new raffles")
     elif message.text == "/check":
-        file = open(r'C:\Users\alexx\RafflesBot\insts.txt', "r")
+        file = open('insts.txt', "r")
         insts = []
         is_empty = False
         while True:
@@ -89,9 +93,9 @@ def get_text_messages(message):
         if is_empty == False:
             for j in range (len(insts)):
                 image, text, post_id = parsing(insts[j])
-                strings = open(r'C:\Users\alexx\RafflesBot\ids.txt').read()
+                strings = open('ids.txt').read()
                 if not(post_id in strings):
-                    with open(r'C:\Users\alexx\RafflesBot\ids.txt', 'a') as file:
+                    with open('ids.txt', 'a') as file:
                         file.write('\n' + post_id + ';')
                 if text.lower().find('раффл') !=-1 or text.lower().find('рафл') !=-1 or text.lower().find('raffle') !=-1 or text.lower().find('регистрация') !=-1:
                     success_msg = '✔️' + ' instagram.com/' + insts[j] + '\n' + text
@@ -108,16 +112,16 @@ def get_text_messages(message):
         if is_admin(str(message.from_user.id) + ';'):
             inst = message.text[5:]
             if botP.get_user_id_from_username(inst) != None:
-                strings = open(r'C:\Users\alexx\RafflesBot\insts.txt').read()
+                strings = open('insts.txt').read()
                 if inst in strings:
                     print('Already added')
                     bot.send_message(message.from_user.id, '🛑 The account is already in the list for checking!')
                 else:
                     if len(strings)!=0:
-                        with open(r'C:\Users\alexx\RafflesBot\insts.txt', 'a') as file:
+                        with open('insts.txt', 'a') as file:
                             file.write('\n' + inst + ';')
                     else:
-                        with open(r'C:\Users\alexx\RafflesBot\insts.txt', 'a') as file:
+                        with open('insts.txt', 'a') as file:
                             file.write(inst + ';')
                     print('ADDED!')
                     bot.send_message(message.from_user.id, '✅ Successfully added!')
@@ -138,7 +142,7 @@ def get_text_messages(message):
             bot.send_message(message.from_user.id, '🛑 Access is denied')
 
     elif message.text == "/list":
-        file = open(r'C:\Users\alexx\RafflesBot\insts.txt', "r")
+        file = open('insts.txt', "r")
         insts = []
         success_msg = ""
         is_empty = False
@@ -154,9 +158,9 @@ def get_text_messages(message):
         if is_empty == False:
             for i in range (len(insts)):
                 image, text, post_id = parsing(insts[i])
-                strings = open(r'C:\Users\alexx\RafflesBot\ids.txt').read()
+                strings = open('ids.txt').read()
                 if not(post_id in strings):
-                    with open(r'C:\Users\alexx\RafflesBot\ids.txt', 'a') as file:
+                    with open('ids.txt', 'a') as file:
                         file.write('\n' + post_id + ';')
                 if text.lower().find('раффл') !=-1 or text.lower().find('рафл') !=-1 or text.lower().find('raffle') !=-1 or text.lower().find('регистрация') !=-1:
                     success_msg = success_msg + '✔️' + ' instagram.com/' + insts[i] + '\n'
@@ -182,3 +186,4 @@ def get_text_messages(message):
     elif message.text == "/id":
         bot.send_message(message.from_user.id, message.from_user.id)
 bot.polling(none_stop=True, interval=0)
+#----------------------------------------------------------
